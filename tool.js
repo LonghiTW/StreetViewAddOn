@@ -100,6 +100,11 @@ function handleClick_1() {
   if (value_1 === null || value_2 === null) {
     return; // Do nothing
   }
+
+  if (value_1 > 0 && value_2 > 0 || value_1 < 0 && value_2 < 0) {
+    display_3.textContent = "Error";
+    return;
+  }
   
   if (value_1 === value_2) {
     display_3.textContent = "Error";
@@ -119,6 +124,11 @@ function handleClick_2() {
   
   if (value_1 === null || value_2 === null) {
     return; // Do nothing
+  }
+
+  if (value_1 > 0 && value_2 > 0 || value_1 < 0 && value_2 < 0) {
+    display_3.textContent = "Error";
+    return;
   }
   
   if (value_1 === value_2) {
