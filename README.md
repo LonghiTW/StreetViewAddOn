@@ -2,7 +2,7 @@
 ## How to use
 1. Open Google Street View.
 2. Open DevTools(F12) and navigate to Console.
-3. Run the commands in file to Console.
+3. Run the [commands](https://github.com/LonghiTW/GMaps_BuildingHeight/blob/main/command.js) to Console.
 4. Close DevTools(F12).
 ## Note
 This tool is based on an easy Trigonometric Measurements method, so there have some principles need to know.
