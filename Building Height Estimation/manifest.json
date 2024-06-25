@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Building Height Estimation",
+  "version": "1.0",
+  "description": "A building height estimation tool for Google street view, based on an simple triangulation methods.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.google.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "height.png"
+  },
+  "icons": {
+    "16": "height.png",
+    "48": "height.png",
+    "128": "height.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.google.com/maps/*"
+      ],
+      "js": ["content.js"]
+    }
+  ]
+}
