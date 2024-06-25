@@ -7,7 +7,7 @@
 4. Close DevTools(F12).
 ### B. Extension
 1. Download [Extension](https://github.com/LonghiTW/GMaps_BuildingHeight/tree/main/Extension) folder.
-2. Go to the [Extensions page](chrome://extensions)
+2. Go to the Extensions page by entering `chrome://extensions` in a new tab.
 3. Enable **Developer Mode** by clicking the toggle.
 4. Click the **Load unpacked** button and select the extension directory.
 5. Done! Open Google Street View to check.
