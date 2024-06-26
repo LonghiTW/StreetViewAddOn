@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,22 +12,57 @@
       font-family: Arial, sans-serif;
       padding: 20px;
     }
+
     h1 {
-      font-size: 1.2em;
+      font-size: large;
       margin-bottom: 10px;
     }
+
     p {
+      font-size: medium;
       margin-bottom: 15px;
     }
+
     a {
       color: #007bff;
       text-decoration: none;
     }
+
+    .container {
+      margin: 20px;
+    }
+
+    .button {
+      width: 100%;
+      justify-content: center;
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
+
 <body>
   <h1>Building Height Estimation</h1>
-  <p>A building height estimation tool for Google Street View, based on simple triangulation methods.</p>
-  <p><a href="https://github.com/LonghiTW/GMaps_BuildingHeight/tree/main" target="_blank">Source Code on GitHub</a></p>
+  <div class="container">
+    <p>A building height estimation tool for Google Street View, based on simple triangulation methods.</p>
+    <p><a href="https://github.com/LonghiTW/GMaps_BuildingHeight/tree/main" target="_blank">Source Code on GitHub</a>
+    </p>
+  </div>
+  <div class="button">
+    <p>Show Tab<sup> (Must Realod To Update)</sup></p>
+    <button id="open"></button>
+  </div>
+  <script src="/popup.js"></script>
 </body>
+
 </html>
