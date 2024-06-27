@@ -23,6 +23,7 @@
 	"content_scripts": [
 		{
 			"matches": ["*://*.google.com/maps/*"],
+			"css": ["styles.css"],
 			"js": ["content.js"]
 		}
 	]
