@@ -13,18 +13,14 @@
 	if (!open) return;
 
 	// Create a div element for the crosshair
-	const crosshair = Object.assign(document.createElement('div'), {
-		style:
-			'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;pointer-events:none;',
-	});
-	const horizontalLine = Object.assign(document.createElement('div'), {
-		style:
-			'position:absolute;top:calc(50% - 1px);left:0;width:100%;height:2px;background-color:red;',
-	});
-	const verticalLine = Object.assign(document.createElement('div'), {
-		style:
-			'position:absolute;top:0;left:calc(50% - 1px);width:2px;height:100%;background-color:red;',
-	});
+	const crosshair = document.createElement('div');
+	crosshair.classList.add('crosshair');
+
+    const horizontalLine = document.createElement('div');
+    horizontalLine.classList.add('horizontal-line');
+
+    const verticalLine = document.createElement('div');
+    verticalLine.classList.add('vertical-line');
 
 	// Append lines to the crosshair
 	crosshair.appendChild(horizontalLine);
@@ -39,48 +35,40 @@
 	// Create container for all elements
 
 	const outer = document.createElement('div');
-	outer.style.cssText =
-		'position: fixed; top: 4rem; right: 20px;font-size:20px;background-color:rgba(255,255,255,0.4);padding:1rem;border-radius: 5px;';
-	const container = document.createElement('div');
-	container.style.cssText =
-		'display: grid; grid-template-columns: auto auto auto; grid-gap: 15px; align-items: center;';
+    outer.classList.add('outer-container');
+
+    const container = document.createElement('div');
+    container.classList.add('inner-container');
 
 	// Create title
 	const title = document.createElement('div');
 	title.innerText = 'Height Estimation';
-	title.style.cssText =
-		'grid-column: 1 / span 3; text-align: center; font-weight: bold; margin: 10px;';
-
-	const children_style =
-		'min-width: 6rem;width:100%; height: auto; background-color: blue; color: white; border: none; border-radius: 5px; padding: 10px;align-self:center;justify-self:center;';
+    title.classList.add('title');
 
 	// Create buttons
 	const button_1 = document.createElement('button');
 	button_1.innerText = 'Point 1';
 	button_1.onclick = handleClick_1;
-	button_1.style.cssText = children_style;
+	button_1.classList.add('button');
 
 	const button_2 = document.createElement('button');
 	button_2.innerText = 'Point 2';
 	button_2.onclick = handleClick_2;
-	button_2.style.cssText = children_style;
-
-	const display_style =
-		'width: 6rem; min-height: 24px; background-color: lightgray; color: black; padding: 10px; border-radius: 5px; text-align: center;align-self:center;justify-self:center;';
+	button_2.classList.add('button');
 
 	// Create display areas
 	const height_3 = document.createElement('div');
-	height_3.style.cssText = display_style + 'overflow:hidden;';
+	height_3.classList.add('display-area') + 'overflow:hidden;';
 	height_3.textContent = `Height(m)`;
 
 	const display_1 = document.createElement('div');
-	display_1.style.cssText = display_style;
+	display_1.classList.add('display-area');
 
 	const display_2 = document.createElement('div');
-	display_2.style.cssText = display_style;
+	display_2.classList.add('display-area');
 
 	const display_3 = document.createElement('div');
-	display_3.style.cssText = display_style;
+	display_3.classList.add('display-area');
 
 	// Append elements to container
 	container.appendChild(title);
