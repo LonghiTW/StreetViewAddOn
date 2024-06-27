@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--  <link rel="stylesheet" href="styles.css"> -->
   <title>Building Height Estimation Tool</title>
   <style>
     body {
@@ -53,16 +54,26 @@
 
 <body>
   <h1>Building Height Estimation</h1>
-  <div class="container">
-    <p>A building height estimation tool for Google Street View, based on simple triangulation methods.</p>
-    <p><a href="https://github.com/LonghiTW/GMaps_BuildingHeight/tree/main" target="_blank">Source Code on GitHub</a>
-    </p>
+  <p>A building height estimation tool for Google Street View, based on simple triangulation methods.</p>
+  <p><a href="https://github.com/LonghiTW/GMaps_BuildingHeight/tree/main" target="_blank">Source Code on GitHub</a>
+  </p>
   </div>
-  <div class="button">
-    <p>Show Tab<sup> (Must Realod To Update)</sup></p>
+  <div class="button"> <!-- todo: replace button with toggle -->
+    <p>Toggle Extension<sup> (Refresh To Apply)</sup></p>
     <button id="open"></button>
   </div>
   <script src="/popup.js"></script>
 </body>
 
 </html>
+
+
+<!--
+  <div class="button">
+    <p>Enable Extension<sup> (Refresh to apply)</sup></p>
+    <label class="switch">
+      <input type="checkbox" id="toggleButton" checked>
+      <span class="slider round"></span>
+    </label>
+  </div>
+-->
