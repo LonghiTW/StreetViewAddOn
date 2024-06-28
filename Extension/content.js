@@ -1,16 +1,16 @@
 (async () => {
-	let open = (await chrome.storage.sync.get('open')).open;
+	const { enabled } = await chrome.storage.sync.get('enabled');
 	let opentab = (await chrome.storage.sync.get('opentab')).opentab;
 
-	console.log(open, opentab, 'open, opentab');
+	console.log(enabled, opentab, 'enabled, opentab');
 
 	if (opentab === undefined) {
 		console.log('Setting default value');
-		chrome.storage.sync.set({ open: true, opentab: true });
-		open = true;
+		chrome.storage.sync.set({ enabled: isChecked, opentab: true });
+		enabled = isChecked;
 		opentab = true;
 	}
-	if (!open) return;
+	if (!enabled) return;
 
 	// Create a div element for the crosshair
 	const crosshair = document.createElement('div');
