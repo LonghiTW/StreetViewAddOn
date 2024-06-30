@@ -5,7 +5,7 @@
 2. Open DevTools(F12) and navigate to Console.
 3. Run the [commands](https://github.com/LonghiTW/GMaps_BuildingHeight/blob/main/command.js) to Console.
 4. Close DevTools(F12).
-### B. Extension
+### B. Extension (on dev)
 1. Download [Extension](https://github.com/LonghiTW/GMaps_BuildingHeight/tree/main/Extension) folder.
 2. Go to the Extensions page by entering `chrome://extensions` in a new tab.
 3. Enable **Developer Mode** by clicking the toggle.
