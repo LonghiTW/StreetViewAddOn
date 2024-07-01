@@ -1,8 +1,8 @@
 (async () => {
-	const { enabled } = await chrome.storage.sync.get('enabled');
+	let enabled = (await chrome.storage.sync.get('enabled')).enabled;
 	let opentab = (await chrome.storage.sync.get('opentab')).opentab;
 
-	console.log(enabled, opentab, 'enabled, opentab');
+	console.log('enabled:', enabled, ', opentab:', opentab);
 
 	if (opentab === undefined) {
 		console.log('Setting default value');
@@ -84,7 +84,7 @@
 	body.appendChild(outer);
 
 	let toggleButton = document.createElement('button');
-	toggleButton.style.cssText = `position: fixed; top: 4rem; right: 20px;font-size:20px;background-color:rgba(255,255,255,1);border-radius: 1000000px;z-index:200;width: 24px;height: 24px;`;
+	toggleButton.classList.add('toggle-button');
 	let toggle = true;
 
 	const compoents = [outer, crosshair];
@@ -108,13 +108,11 @@
 			},
 		);
 		if (!update) return;
-		chrome.storage.sync
-			.set({
-				open: await chrome.storage.sync.get('open').open,
+		chrome.storage.sync.set({
 				opentab: toggle,
 			})
 			.then(() => {
-				console.log('Saved');
+				console.log('Toggled!');
 			});
 	}
 
@@ -123,7 +121,6 @@
 	});
 
 	body.appendChild(toggleButton);
-	console.log(opentab);
 	if (!opentab) {
 		toggleChange(false);
 	}
