@@ -6,8 +6,8 @@
 
 	if (opentab === undefined) {
 		console.log('Setting default value');
-		chrome.storage.sync.set({ enabled: isChecked, opentab: true });
-		enabled = isChecked;
+		chrome.storage.sync.set({ enabled: true, opentab: true });
+		enabled = true;
 		opentab = true;
 	}
 	if (!enabled) return;
