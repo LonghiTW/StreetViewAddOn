@@ -1,4 +1,4 @@
-# Building Height Estimation
+# Height Estimation
 ## How to use
 1. Download [ZIP](https://github.com/LonghiTW/GMaps_BuildingHeight/archive/refs/heads/main.zip) and unzip.
 2. Go to the Extensions page by entering `chrome://extensions` in a new tab.
