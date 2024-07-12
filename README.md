@@ -6,7 +6,7 @@
 3. Copy [commands](https://github.com/LonghiTW/HeightEstimationForGMaps/blob/main/commands.js) and paste it to console.
 4. Close DevTool(F12).
 ### Extension
-1. Download [ZIP]([https://github.com/LonghiTW/GMaps_BuildingHeight/archive/refs/heads/main.zip](https://github.com/LonghiTW/HeightEstimationForGMaps/releases)) and unzip.
+1. Download [ZIP](https://github.com/LonghiTW/HeightEstimationForGMaps/releases) and unzip.
 2. Go to the Extensions page by entering `chrome://extensions` in a new tab.
 3. Enable **Developer Mode** by clicking the toggle.
 4. Click the **Load unpacked** button and select the directory of the folder you just unzip.
