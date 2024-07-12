@@ -1,5 +1,11 @@
 # Height Estimation
 ## How to use
+### DevTool
+1. Open Google Street View.
+2. Open DevTool(F12).
+3. Copy [commands](https://github.com/LonghiTW/HeightEstimationForGMaps/blob/main/commands.js) and paste it to console.
+4. Close DevTool(F12).
+### Extension
 1. Download [ZIP](https://github.com/LonghiTW/GMaps_BuildingHeight/archive/refs/heads/main.zip) and unzip.
 2. Go to the Extensions page by entering `chrome://extensions` in a new tab.
 3. Enable **Developer Mode** by clicking the toggle.
