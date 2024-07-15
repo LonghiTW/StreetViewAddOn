@@ -15,9 +15,9 @@
 This tool is based on an easy Trigonometric Measurements method, so there have some principles need to know.
 1. Need an intersection point between building and ground and the point you want to measure.
 2. Those two point must be on the same vertical line.
-~~3. The building and camera must be on the same height plane, so the closer the camera is to the building, the more accurate the estimate will typically be.
-4. Street View must be captured by a Street View car with a camera height of 2.5 m, not a Street View Trekker.~~
-~# Now you can deal with these situations mentioned in 3 and 4 by adding modifiers
+~~3. The building and camera must be on the same height plane, so the closer the camera is to the building, the more accurate the estimate will typically be.~~
+~~4. Street View must be captured by a Street View car with a camera height of 2.5 m, not a Street View Trekker.~~
+> Now you can deal with these situations mentioned in 3 and 4 by adding modifiers
 
-
-~# Materials from [いらすとや](https://www.irasutoya.com/)
+![Height Estimation.png](https://github.com/LonghiTW/HeightEstimationForGMaps/blob/main/Height%20Estimation.png)
+> Materials from [いらすとや](https://www.irasutoya.com/)
