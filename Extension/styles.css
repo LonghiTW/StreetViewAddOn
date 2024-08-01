@@ -68,6 +68,7 @@
     padding: 10px;
     align-self: center;
     justify-self: center;
+    cursor: pointer;
 }
 
 /* Display area styles */
@@ -94,4 +95,5 @@
     z-index:200;
     width: 24px;
     height: 24px;
+    cursor: pointer;
 }
