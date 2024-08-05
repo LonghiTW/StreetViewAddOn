@@ -239,7 +239,8 @@ function handleClick_point1() {
 			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
 			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
 
-		} else return; // Do nothing
+		}
+		return;
 	}
 
 	if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
@@ -292,7 +293,8 @@ function handleClick_point2() {
 			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
 			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
 			
-		} else return; // Do nothing
+		}
+		return; // Do nothing
 	}
 
 	if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
@@ -343,3 +345,67 @@ function handleClick_coords() {
             console.error('Failed to copy coordinates: ', err);
         });
 }
+
+function updateWhenModifierChange() {
+	modifier = parseFloat(input_modifier.value) / 100 || 0;
+	ground = 2.5 - modifier;
+	
+	let url_2 = location.href;
+	const { lat, lon } = parseUrl(url_2);
+	if (pitch_1 === null || pitch_2 === null) {
+		if (pitch_2 < 0) {
+			let distance = -ground * cot((pitch_2 / 180) * Math.PI);
+			display_distance.textContent = `${distance.toFixed(2)}`;
+
+			const start = new LatLon(lat, lon); // 初始座標
+			endPoint = start.destinationPoint(distance, bearing_2);
+			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+			
+		}
+		if (pitch_1 < 0) {
+			let distance = -ground * cot((pitch_1 / 180) * Math.PI);
+			display_distance.textContent = `${distance.toFixed(2)}`;
+
+			const start = new LatLon(lat, lon); // 初始座標
+			endPoint = start.destinationPoint(distance, bearing_1);
+			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+
+		}
+		return; // Do nothing
+	}
+
+	if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
+		display_height.textContent = 'Error';
+		display_distance.textContent = 'Error';
+		return;
+	}
+
+	if (pitch_1 < pitch_2) {
+		let distance = -ground * cot((pitch_1 / 180) * Math.PI);
+		display_distance.textContent = `${distance.toFixed(2)}`;
+		let height = distance * Math.tan((pitch_2 / 180) * Math.PI) + ground;
+		display_height.textContent = `${height.toFixed(2)}`;
+
+		const start = new LatLon(lat, lon); // 初始座標
+		endPoint = start.destinationPoint(distance, bearing_1);
+		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+		
+	} else {
+		// pitch_1 > pitch_2
+		let distance = -ground * cot((pitch_2 / 180) * Math.PI);
+		display_distance.textContent = `${distance.toFixed(2)}`;
+		let height = distance * Math.tan((pitch_1 / 180) * Math.PI) + ground;
+		display_height.textContent = `${height.toFixed(2)}`;
+
+		const start = new LatLon(lat, lon); // 初始座標
+		endPoint = start.destinationPoint(distance, bearing_2);
+		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+		
+	}
+}
+
+input_modifier.addEventListener('input', updateWhenModifierChange);
