@@ -65,6 +65,14 @@ button_2.innerText = 'Point 2';
 button_2.onclick = handleClick_point2;
 button_2.style.cssText = button_style;
 
+// Create coordinates button
+const coords_style =
+	'grid-column: 1 / span 2; min-width: 7rem; width: 100%; background-color: gray; color: black; padding: 10px; border-radius: 5px; text-align: center;align-self:center;justify-self:center; cursor: pointer;';
+const button_coords = document.createElement('button');
+button_coords.innerText = 'Coordinates';
+button_coords.onclick = handleClick_coords;
+button_coords.style.cssText = coords_style;
+
 const display_style =
 	'width: 7rem; min-height: 24px; background-color: lightgray; color: black; padding: 10px; border-radius: 5px; text-align: center;align-self:center;justify-self:center;';
 
@@ -83,11 +91,11 @@ const text_height = document.createElement('div');
 text_height.style.cssText = display_style + 'overflow:hidden;';
 text_height.textContent = `Height(m)`;
 
-const display_1 = document.createElement('div');
-display_1.style.cssText = display_style;
+const display_point1 = document.createElement('div');
+display_point1.style.cssText = display_style;
 
-const display_2 = document.createElement('div');
-display_2.style.cssText = display_style;
+const display_point2 = document.createElement('div');
+display_point2.style.cssText = display_style;
 
 const text_distance = document.createElement('div');
 text_distance.textContent = `Distance(m)`;
@@ -105,20 +113,21 @@ container.appendChild(text_modifier);
 container.appendChild(input_modifier);
 container.appendChild(button_1);
 container.appendChild(text_distance);
-container.appendChild(display_1);
+container.appendChild(display_point1);
 container.appendChild(display_distance);
 container.appendChild(button_2);
 container.appendChild(text_height);
-container.appendChild(display_2);
+container.appendChild(display_point2);
 container.appendChild(display_height);
+container.appendChild(button_coords);
 
 // Add container to body
 outer.appendChild(container);
 body.appendChild(outer);
 
 // Variables to store values
-let value_1 = null;
-let value_2 = null;
+let pitch_1 = null;
+let pitch_2 = null;
 
 function cot(x) {
 	return 1 / Math.tan(x);
@@ -127,67 +136,204 @@ function cot(x) {
 let modifier = parseFloat(input_modifier.value) / 100 || 0;
 let ground = 2.5 - modifier;
 
+let endPoint = { lat: null, lon: null };
+
+// Get destination coordinates
+// https://github.com/chrisveness/geodesy/blob/master/latlon-ellipsoidal-vincenty.js#L129
+class LatLon {
+    constructor(lat, lon) {
+        this.lat = lat; // 緯度
+        this.lon = lon; // 經度
+    }
+
+    toRadians(degrees) {
+        return degrees * Math.PI / 180;
+    }
+
+    toDegrees(radians) {
+        return radians * 180 / Math.PI;
+    }
+
+    destinationPoint(distance, bearing) {
+        const φ1 = this.toRadians(this.lat);  // 初始緯度
+        const λ1 = this.toRadians(this.lon);  // 初始經度
+        const α1 = this.toRadians(bearing);  // 方位角
+
+        // WGS-84 ellipsoid
+        const a = 6378137; // Equatorial radius
+        const f = 1 / 298.257223563; // Inverse flattening
+        const b = (1 - f) * a; // Polar radius
+
+        const sinα1 = Math.sin(α1);
+        const cosα1 = Math.cos(α1);
+
+        const tanU1 = (1 - f) * Math.tan(φ1);
+        const cosU1 = 1 / Math.sqrt(1 + tanU1 * tanU1);
+        const sinU1 = tanU1 * cosU1;
+
+        const σ1 = Math.atan2(tanU1, cosα1);
+        const sinα = cosU1 * sinα1;
+        const cosSqα = 1 - sinα * sinα;
+        const uSq = cosSqα * (a * a - b * b) / (b * b);
+        const A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
+        const B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));
+
+        let σ = distance / (b * A);
+        let sinσ, cosσ, Δσ, cos2σm;
+
+        let σʹ = null;
+        let iterations = 0;
+        do {
+            cos2σm = Math.cos(2 * σ1 + σ);
+            sinσ = Math.sin(σ);
+            cosσ = Math.cos(σ);
+            const Δσ = B * sinσ * (cos2σm + B / 4 * (cosσ * (-1 + 2 * cos2σm * cos2σm) - B / 6 * cos2σm * (-3 + 4 * sinσ * sinσ) * (-3 + 4 * cos2σm * cos2σm)));
+            σʹ = σ;
+            σ = distance / (b * A) + Δσ;
+        } while (Math.abs(σ - σʹ) > 1e-12 && ++iterations < 100);
+
+        const x = sinU1 * sinσ - cosU1 * cosσ * cosα1;
+        const φ2 = Math.atan2(sinU1 * cosσ + cosU1 * sinσ * cosα1, (1 - f) * Math.sqrt(sinα * sinα + x * x));
+        const λ = Math.atan2(sinσ * sinα1, cosU1 * cosσ - sinU1 * sinσ * cosα1);
+        const C = f / 16 * cosSqα * (4 + f * (4 - 3 * cosSqα));
+        const L = λ - (1 - C) * f * sinα * (σ + C * sinσ * (cos2σm + C * cosσ * (-1 + 2 * cos2σm * cos2σm)));
+        const λ2 = λ1 + L;
+
+        const α2 = Math.atan2(sinα, -x);
+
+        return {
+            lat: this.toDegrees(φ2),
+            lon: this.toDegrees(λ2),
+        };
+    }
+}
+
+// URL processing
+function parseUrl(url) {
+    const parts = url.split(/,|t\/|@|h,/);
+    const lat = Number(parts[1]);
+    const lon = Number(parts[2]);
+    const bearing = Number(parts[5]);
+    const pitch = Number(parts[6]) - 90;
+    return { lat, lon, bearing, pitch };
+}
+
 // Functions to handle button clicks
 function handleClick_point1() {
 	let url_1 = location.href;
-	display_point1.textContent = `${url_1.split(/,|t\//)[5]}`;
-	value_1 = Number(url_1.split(/,|t\//)[5]) - 90;
+	const { lat, lon, bearing: bearing_1, pitch: pitch_1 } = parseUrl(url_1);
+	
+	display_point1.textContent = `${pitch_1 + 90}`;
 
-	if (value_1 === null || value_2 === null) {
-		if (value_1 < 0) {
-			let distance = -ground * cot((value_1 / 180) * Math.PI);
+	if (pitch_1 === null || pitch_2 === null) {
+		if (pitch_1 < 0) {
+			let distance = -ground * cot((pitch_1 / 180) * Math.PI);
 			display_distance.textContent = `${distance.toFixed(2)}`;
+
+			const start = new LatLon(lat, lon); // 初始座標
+			endPoint = start.destinationPoint(distance, bearing_1);
+			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+
 		} else return; // Do nothing
 	}
 
-	if ((value_1 === value_2) || (value_1 > 0 && value_2 > 0) || (value_1 < 0 && value_2 < 0)) {
+	if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
 		display_height.textContent = 'Error';
 		display_distance.textContent = 'Error';
 		return;
 	}
 
-	if (value_1 < value_2) {
-		let distance = -ground * cot((value_1 / 180) * Math.PI);
+	if (pitch_1 < pitch_2) {
+		let distance = -ground * cot((pitch_1 / 180) * Math.PI);
 		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((value_2 / 180) * Math.PI) + ground;
+		let height = distance * Math.tan((pitch_2 / 180) * Math.PI) + ground;
 		display_height.textContent = `${height.toFixed(2)}`;
+		
+		const start = new LatLon(lat, lon); // 初始座標
+		endPoint = start.destinationPoint(distance, bearing_1);
+		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+		
 	} else {
-		// value_1 > value_2
-		let distance = -ground * cot((value_2 / 180) * Math.PI);
+		// pitch_1 > pitch_2
+		let distance = -ground * cot((pitch_2 / 180) * Math.PI);
 		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((value_1 / 180) * Math.PI) + ground;
+		let height = distance * Math.tan((pitch_1 / 180) * Math.PI) + ground;
 		display_height.textContent = `${height.toFixed(2)}`;
+				
+		const start = new LatLon(lat, lon); // 初始座標
+		endPoint = start.destinationPoint(distance, bearing_2);
+		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+		
 	}
 }
 
 function handleClick_point2() {
 	let url_2 = location.href;
-	display_point2.textContent = `${url_2.split(/,|t\//)[5]}`;
-	value_2 = Number(url_2.split(/,|t\//)[5]) - 90;
+	const { lat, lon, bearing: bearing_2, pitch: pitch_2 } = parseUrl(url_2);
+	
+	display_point2.textContent = `${pitch_2 + 90}`;
 
-	if (value_1 === null || value_2 === null) {
-		if (value_2 < 0) {
-			let distance = -ground * cot((value_2 / 180) * Math.PI);
+	if (pitch_1 === null || pitch_2 === null) {
+		if (pitch_2 < 0) {
+			let distance = -ground * cot((pitch_2 / 180) * Math.PI);
 			display_distance.textContent = `${distance.toFixed(2)}`;
+
+			const start = new LatLon(lat, lon); // 初始座標
+			endPoint = start.destinationPoint(distance, bearing_2);
+			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+			
 		} else return; // Do nothing
 	}
 
-	if ((value_1 === value_2) || (value_1 > 0 && value_2 > 0) || (value_1 < 0 && value_2 < 0)) {
+	if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
 		display_height.textContent = 'Error';
 		display_distance.textContent = 'Error';
 		return;
 	}
 
-	if (value_1 < value_2) {
-		let distance = -ground * cot((value_1 / 180) * Math.PI);
+	if (pitch_1 < pitch_2) {
+		let distance = -ground * cot((pitch_1 / 180) * Math.PI);
 		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((value_2 / 180) * Math.PI) + ground;
+		let height = distance * Math.tan((pitch_2 / 180) * Math.PI) + ground;
 		display_height.textContent = `${height.toFixed(2)}`;
+
+		const start = new LatLon(lat, lon); // 初始座標
+		endPoint = start.destinationPoint(distance, bearing_1);
+		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+		
 	} else {
-		// value_1 > value_2
-		let distance = -ground * cot((value_2 / 180) * Math.PI);
+		// pitch_1 > pitch_2
+		let distance = -ground * cot((pitch_2 / 180) * Math.PI);
 		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((value_1 / 180) * Math.PI) + ground;
+		let height = distance * Math.tan((pitch_1 / 180) * Math.PI) + ground;
 		display_height.textContent = `${height.toFixed(2)}`;
+
+		const start = new LatLon(lat, lon); // 初始座標
+		endPoint = start.destinationPoint(distance, bearing_2);
+		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+		
 	}
+}
+
+function handleClick_coords() {
+    if (endPoint.lat === null || endPoint.lon === null) {
+        alert('No coordinates to copy!');
+        return;
+    }
+
+    const text = `${endPoint.lat}, ${endPoint.lon}`;
+    
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            alert(`Coordinates "${text}" copied to clipboard!`);
+        })
+        .catch(err => {
+            console.error('Failed to copy coordinates: ', err);
+        });
 }
