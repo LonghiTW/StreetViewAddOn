@@ -128,6 +128,8 @@ body.appendChild(outer);
 // Variables to store values
 let pitch_1 = null;
 let pitch_2 = null;
+let bearing_1 = null;
+let bearing_2 = null;
 
 function cot(x) {
 	return 1 / Math.tan(x);
@@ -221,7 +223,9 @@ function parseUrl(url) {
 // Functions to handle button clicks
 function handleClick_point1() {
 	let url_1 = location.href;
-	const { lat, lon, bearing: bearing_1, pitch: pitch_1 } = parseUrl(url_1);
+	const { lat, lon, bearing: bearing_temp, pitch: pitch_temp } = parseUrl(url_1);
+	bearing_1 = bearing_temp;
+	pitch_1 = pitch_temp;
 	
 	display_point1.textContent = `${pitch_1 + 90}`;
 
@@ -272,7 +276,9 @@ function handleClick_point1() {
 
 function handleClick_point2() {
 	let url_2 = location.href;
-	const { lat, lon, bearing: bearing_2, pitch: pitch_2 } = parseUrl(url_2);
+	const { lat, lon, bearing: bearing_temp, pitch: pitch_temp } = parseUrl(url_2);
+	pitch_2 = pitch_temp;
+	bearing_2 = bearing_temp;
 	
 	display_point2.textContent = `${pitch_2 + 90}`;
 
