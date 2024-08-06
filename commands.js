@@ -47,7 +47,7 @@ container.style.cssText =
 
 // Create title
 const title = document.createElement('div');
-title.innerText = 'Height Estimation';
+title.innerText = 'StreetView AddOn';
 title.style.cssText =
 	'grid-column: 1 / span 2; text-align: center; font-weight: bold; margin: 10px;';
 
