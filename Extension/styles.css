@@ -71,6 +71,21 @@
     cursor: pointer;
 }
 
+/* Coordinates area styles */
+.coords {
+    grid-column: 1 / span 2;
+    min-width: 7rem;
+    width: 100%;
+    background-color: gray;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    align-self:center;
+    justify-self:center;
+    cursor: pointer;
+}
+
 /* Display area styles */
 .display-area {
     width: 7rem;
