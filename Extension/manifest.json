@@ -1,8 +1,8 @@
 {
 	"manifest_version": 3,
-	"name": "Height Estimation",
-	"version": "1.1",
-	"description": "A building height estimation tool for Google street view, based on an simple triangulation methods.",
+	"name": "StreetView AddOn",
+	"version": "1.0",
+	"description": "A Google StreetView AddOn with height and coordinates estimation.",
 	"permissions": ["activeTab", "scripting", "storage"],
 	"host_permissions": ["*://*.google.com/*"],
 	"action": {
