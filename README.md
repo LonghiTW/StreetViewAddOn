@@ -1,4 +1,7 @@
-# Height Estimation
+# StreetView AddOn
+## Features
+* Height Estimation
+* Coordinates Estimation
 ## How to use
 ### DevTool
 1. Open Google Street View.
