@@ -7,7 +7,7 @@
 	"host_permissions": ["*://*.google.com/*"],
 	"action": {
 		"default_popup": "popup.html",
-		"default_icon": "height.png"
+		"default_icon": "streetview.png"
 	},
 	"web_accessible_resources": [
 		{
@@ -16,9 +16,9 @@
 		}
 	],
 	"icons": {
-		"16": "height.png",
-		"48": "height.png",
-		"128": "height.png"
+		"16": "streetview.png",
+		"48": "streetview.png",
+		"128": "streetview.png"
 	},
 	"content_scripts": [
 		{
