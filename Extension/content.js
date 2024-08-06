@@ -16,11 +16,11 @@
 	const crosshair = document.createElement('div');
 	crosshair.classList.add('crosshair');
 
-    const horizontalLine = document.createElement('div');
-    horizontalLine.classList.add('horizontal-line');
+        const horizontalLine = document.createElement('div');
+        horizontalLine.classList.add('horizontal-line');
 
-    const verticalLine = document.createElement('div');
-    verticalLine.classList.add('vertical-line');
+        const verticalLine = document.createElement('div');
+        verticalLine.classList.add('vertical-line');
 
 	// Append lines to the crosshair
 	crosshair.appendChild(horizontalLine);
@@ -34,25 +34,25 @@
 
 	// Create container for all elements
 	const outer = document.createElement('div');
-    outer.classList.add('outer-container');
+        outer.classList.add('outer-container');
 
-    const container = document.createElement('div');
-    container.classList.add('inner-container');
+        const container = document.createElement('div');
+        container.classList.add('inner-container');
 
 	// Create title
 	const title = document.createElement('div');
 	title.innerText = 'Height Estimation';
-    title.classList.add('title');
+        title.classList.add('title');
 
 	// Create input field or toggle
 	const input_modifier = document.createElement('input');
 	input_modifier.type = 'number';
-    input_modifier.placeholder = '0';
+        input_modifier.placeholder = '0';
 	input_modifier.classList.add('display-area');
 	
 	const label_distance = document.createElement('label');
-    label_distance.classList.add('toggle-label');
-    label_distance.setAttribute('for', 'toggle');
+        label_distance.classList.add('toggle-label');
+        label_distance.setAttribute('for', 'toggle');
 
 	// Create buttons
 	const button_point1 = document.createElement('button');
@@ -69,7 +69,7 @@
 	const button_coords = document.createElement('button');
 	button_coords.innerText = 'Coordinates';
 	button_coords.onclick = handleClick_coords;
-	button_point2.classList.add('coords');
+	button_coords.classList.add('coords');
 	
 	// Create display areas
 	const text_modifier = document.createElement('div');
