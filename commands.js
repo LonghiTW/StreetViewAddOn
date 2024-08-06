@@ -55,15 +55,15 @@ const button_style =
 	'min-width: 7rem; width: 100%; height: auto; background-color: blue; color: white; border: none; border-radius: 5px; padding: 10px; align-self: center; justify-self: center; cursor: pointer;';
 
 // Create buttons
-const button_1 = document.createElement('button');
-button_1.innerText = 'Point 1';
-button_1.onclick = handleClick_point1;
-button_1.style.cssText = button_style;
+const button_point1 = document.createElement('button');
+button_point1.innerText = 'Point 1';
+button_point1.onclick = handleClick_point1;
+button_point1.style.cssText = button_style;
 
-const button_2 = document.createElement('button');
-button_2.innerText = 'Point 2';
-button_2.onclick = handleClick_point2;
-button_2.style.cssText = button_style;
+const button_point2 = document.createElement('button');
+button_point2.innerText = 'Point 2';
+button_point2.onclick = handleClick_point2;
+button_point2.style.cssText = button_style;
 
 // Create coordinates button
 const coords_style =
@@ -111,13 +111,13 @@ display_height.style.cssText = display_style;
 container.appendChild(title);
 container.appendChild(text_modifier);
 container.appendChild(input_modifier);
-container.appendChild(button_1);
-container.appendChild(text_distance);
+container.appendChild(button_point1);
+container.appendChild(button_point2);
 container.appendChild(display_point1);
-container.appendChild(display_distance);
-container.appendChild(button_2);
-container.appendChild(text_height);
 container.appendChild(display_point2);
+container.appendChild(text_distance);
+container.appendChild(text_height);
+container.appendChild(display_distance);
 container.appendChild(display_height);
 container.appendChild(button_coords);
 
@@ -131,84 +131,83 @@ let pitch_2 = null;
 let bearing_1 = null;
 let bearing_2 = null;
 
-function cot(x) {
-	return 1 / Math.tan(x);
-}
-
 let modifier = parseFloat(input_modifier.value) / 100 || 0;
 let ground = 2.5 - modifier;
 
 let endPoint = { lat: null, lon: null };
 
+// Mathematical calculations
+function cot(x) {
+	return 1 / Math.tan(x);
+}
+
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+function toDegrees(radians) {
+    return radians * 180 / Math.PI;
+}
+
+function GetAdjacent(alpha) {
+    return -ground * cot(toRadians(alpha));
+}	
+
 // Get destination coordinates
 // https://github.com/chrisveness/geodesy/blob/master/latlon-ellipsoidal-vincenty.js#L129
-class LatLon {
-    constructor(lat, lon) {
-        this.lat = lat; // 緯度
-        this.lon = lon; // 經度
-    }
+function destinationPoint(lat, lon, distance, bearing) {
+    const φ1 = toRadians(lat);
+    const λ1 = toRadians(lon);
+    const α1 = toRadians(bearing);
 
-    toRadians(degrees) {
-        return degrees * Math.PI / 180;
-    }
+    // WGS-84 ellipsoid
+    const a = 6378137; // Equatorial radius
+    const f = 1 / 298.257223563; // Inverse flattening
+    const b = (1 - f) * a; // Polar radius
 
-    toDegrees(radians) {
-        return radians * 180 / Math.PI;
-    }
+    const sinα1 = Math.sin(α1);
+    const cosα1 = Math.cos(α1);
 
-    destinationPoint(distance, bearing) {
-        const φ1 = this.toRadians(this.lat);  // 初始緯度
-        const λ1 = this.toRadians(this.lon);  // 初始經度
-        const α1 = this.toRadians(bearing);  // 方位角
+    const tanU1 = (1 - f) * Math.tan(φ1);
+    const cosU1 = 1 / Math.sqrt(1 + tanU1 * tanU1);
+    const sinU1 = tanU1 * cosU1;
 
-        // WGS-84 ellipsoid
-        const a = 6378137; // Equatorial radius
-        const f = 1 / 298.257223563; // Inverse flattening
-        const b = (1 - f) * a; // Polar radius
+    const σ1 = Math.atan2(tanU1, cosα1);
+    const sinα = cosU1 * sinα1;
+    const cosSqα = 1 - sinα * sinα;
+    const uSq = cosSqα * (a * a - b * b) / (b * b);
+    const A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
+    const B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));
 
-        const sinα1 = Math.sin(α1);
-        const cosα1 = Math.cos(α1);
+    let σ = distance / (b * A);
+    let sinσ, cosσ, Δσ, cos2σm;
 
-        const tanU1 = (1 - f) * Math.tan(φ1);
-        const cosU1 = 1 / Math.sqrt(1 + tanU1 * tanU1);
-        const sinU1 = tanU1 * cosU1;
+    let σʹ = null;
+    let iterations = 0;
+    do {
+        cos2σm = Math.cos(2 * σ1 + σ);
+        sinσ = Math.sin(σ);
+        cosσ = Math.cos(σ);
+        const Δσ = B * sinσ * (cos2σm + B / 4 * (cosσ * (-1 + 2 * cos2σm * cos2σm) - B / 6 * cos2σm * (-3 + 4 * sinσ * sinσ) * (-3 + 4 * cos2σm * cos2σm)));
+        σʹ = σ;
+        σ = distance / (b * A) + Δσ;
+    } while (Math.abs(σ - σʹ) > 1e-12 && ++iterations < 100);
 
-        const σ1 = Math.atan2(tanU1, cosα1);
-        const sinα = cosU1 * sinα1;
-        const cosSqα = 1 - sinα * sinα;
-        const uSq = cosSqα * (a * a - b * b) / (b * b);
-        const A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
-        const B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));
+    const x = sinU1 * sinσ - cosU1 * cosσ * cosα1;
+    const φ2 = Math.atan2(sinU1 * cosσ + cosU1 * sinσ * cosα1, (1 - f) * Math.sqrt(sinα * sinα + x * x));
+    const λ = Math.atan2(sinσ * sinα1, cosU1 * cosσ - sinU1 * sinσ * cosα1);
+    const C = f / 16 * cosSqα * (4 + f * (4 - 3 * cosSqα));
+    const L = λ - (1 - C) * f * sinα * (σ + C * sinσ * (cos2σm + C * cosσ * (-1 + 2 * cos2σm * cos2σm)));
+    const λ2 = λ1 + L;
 
-        let σ = distance / (b * A);
-        let sinσ, cosσ, Δσ, cos2σm;
+    const α2 = Math.atan2(sinα, -x);
 
-        let σʹ = null;
-        let iterations = 0;
-        do {
-            cos2σm = Math.cos(2 * σ1 + σ);
-            sinσ = Math.sin(σ);
-            cosσ = Math.cos(σ);
-            const Δσ = B * sinσ * (cos2σm + B / 4 * (cosσ * (-1 + 2 * cos2σm * cos2σm) - B / 6 * cos2σm * (-3 + 4 * sinσ * sinσ) * (-3 + 4 * cos2σm * cos2σm)));
-            σʹ = σ;
-            σ = distance / (b * A) + Δσ;
-        } while (Math.abs(σ - σʹ) > 1e-12 && ++iterations < 100);
-
-        const x = sinU1 * sinσ - cosU1 * cosσ * cosα1;
-        const φ2 = Math.atan2(sinU1 * cosσ + cosU1 * sinσ * cosα1, (1 - f) * Math.sqrt(sinα * sinα + x * x));
-        const λ = Math.atan2(sinσ * sinα1, cosU1 * cosσ - sinU1 * sinσ * cosα1);
-        const C = f / 16 * cosSqα * (4 + f * (4 - 3 * cosSqα));
-        const L = λ - (1 - C) * f * sinα * (σ + C * sinσ * (cos2σm + C * cosσ * (-1 + 2 * cos2σm * cos2σm)));
-        const λ2 = λ1 + L;
-
-        const α2 = Math.atan2(sinα, -x);
-
-        return {
-            lat: this.toDegrees(φ2),
-            lon: this.toDegrees(λ2),
-        };
-    }
+    return {
+        lat: toDegrees(φ2),
+        lon: toDegrees(λ2),
+    };
 }
+
 
 // URL processing
 function parseUrl(url) {
@@ -231,46 +230,35 @@ function handleClick_point1() {
 
 	if (pitch_1 === null || pitch_2 === null) {
 		if (pitch_1 < 0) {
-			let distance = -ground * cot((pitch_1 / 180) * Math.PI);
+			let distance = GetAdjacent(pitch_1);
 			display_distance.textContent = `${distance.toFixed(2)}`;
 
-			const start = new LatLon(lat, lon); // 初始座標
-			endPoint = start.destinationPoint(distance, bearing_1);
-			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+			endPoint = destinationPoint(lat, lon, distance, bearing_1);
+			button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
+			console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
 
 		}
 		return;
 	}
 
-	if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
+	else if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
 		display_height.textContent = 'Error';
 		display_distance.textContent = 'Error';
 		return;
-	}
-
-	if (pitch_1 < pitch_2) {
-		let distance = -ground * cot((pitch_1 / 180) * Math.PI);
-		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((pitch_2 / 180) * Math.PI) + ground;
-		display_height.textContent = `${height.toFixed(2)}`;
-		
-		const start = new LatLon(lat, lon); // 初始座標
-		endPoint = start.destinationPoint(distance, bearing_1);
-		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
-		
+	
 	} else {
-		// pitch_1 > pitch_2
-		let distance = -ground * cot((pitch_2 / 180) * Math.PI);
+        let minPitch = Math.min(pitch_1, pitch_2);
+        let maxPitch = Math.max(pitch_1, pitch_2);
+
+		let distance = GetAdjacent(minPitch);
 		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((pitch_1 / 180) * Math.PI) + ground;
+		let height = distance * Math.tan(toRadians(maxPitch)) + ground;
 		display_height.textContent = `${height.toFixed(2)}`;
-				
-		const start = new LatLon(lat, lon); // 初始座標
-		endPoint = start.destinationPoint(distance, bearing_2);
-		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+		
+		let bearing = (bearing_1 + bearing_2) / 2
+		endPoint = destinationPoint(lat, lon, distance, bearing);
+		button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
+		console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
 		
 	}
 }
@@ -285,46 +273,35 @@ function handleClick_point2() {
 
 	if (pitch_1 === null || pitch_2 === null) {
 		if (pitch_2 < 0) {
-			let distance = -ground * cot((pitch_2 / 180) * Math.PI);
+			let distance = GetAdjacent(pitch_2);
 			display_distance.textContent = `${distance.toFixed(2)}`;
 
-			const start = new LatLon(lat, lon); // 初始座標
-			endPoint = start.destinationPoint(distance, bearing_2);
-			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+			endPoint = destinationPoint(lat, lon, distance, bearing_2);
+			button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
+			console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
 			
 		}
 		return; // Do nothing
 	}
 
-	if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
+	else if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
 		display_height.textContent = 'Error';
 		display_distance.textContent = 'Error';
 		return;
-	}
-
-	if (pitch_1 < pitch_2) {
-		let distance = -ground * cot((pitch_1 / 180) * Math.PI);
-		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((pitch_2 / 180) * Math.PI) + ground;
-		display_height.textContent = `${height.toFixed(2)}`;
-
-		const start = new LatLon(lat, lon); // 初始座標
-		endPoint = start.destinationPoint(distance, bearing_1);
-		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
-		
+	
 	} else {
-		// pitch_1 > pitch_2
-		let distance = -ground * cot((pitch_2 / 180) * Math.PI);
-		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((pitch_1 / 180) * Math.PI) + ground;
-		display_height.textContent = `${height.toFixed(2)}`;
+        let minPitch = Math.min(pitch_1, pitch_2);
+        let maxPitch = Math.max(pitch_1, pitch_2);
 
-		const start = new LatLon(lat, lon); // 初始座標
-		endPoint = start.destinationPoint(distance, bearing_2);
-		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+		let distance = GetAdjacent(minPitch);
+		display_distance.textContent = `${distance.toFixed(2)}`;
+		let height = distance * Math.tan(toRadians(maxPitch)) + ground;
+		display_height.textContent = `${height.toFixed(2)}`;
+		
+		let bearing = (bearing_1 + bearing_2) / 2
+		endPoint = destinationPoint(lat, lon, distance, bearing);
+		button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
+		console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
 		
 	}
 }
@@ -354,56 +331,44 @@ function updateWhenModifierChange() {
 	const { lat, lon } = parseUrl(url_2);
 	if (pitch_1 === null || pitch_2 === null) {
 		if (pitch_2 < 0) {
-			let distance = -ground * cot((pitch_2 / 180) * Math.PI);
+			let distance = GetAdjacent(pitch_2);
 			display_distance.textContent = `${distance.toFixed(2)}`;
 
-			const start = new LatLon(lat, lon); // 初始座標
-			endPoint = start.destinationPoint(distance, bearing_2);
-			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+			endPoint = destinationPoint(lat, lon, distance, bearing_2);
+			button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
+			console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
 			
 		}
 		if (pitch_1 < 0) {
-			let distance = -ground * cot((pitch_1 / 180) * Math.PI);
+			let distance = GetAdjacent(pitch_1);
 			display_distance.textContent = `${distance.toFixed(2)}`;
 
-			const start = new LatLon(lat, lon); // 初始座標
-			endPoint = start.destinationPoint(distance, bearing_1);
-			button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-			console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+			endPoint = destinationPoint(lat, lon, distance, bearing_1);
+			button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
+			console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
 
 		}
 		return; // Do nothing
 	}
 
-	if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
+	else if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
 		display_height.textContent = 'Error';
 		display_distance.textContent = 'Error';
 		return;
-	}
-
-	if (pitch_1 < pitch_2) {
-		let distance = -ground * cot((pitch_1 / 180) * Math.PI);
-		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((pitch_2 / 180) * Math.PI) + ground;
-		display_height.textContent = `${height.toFixed(2)}`;
-
-		const start = new LatLon(lat, lon); // 初始座標
-		endPoint = start.destinationPoint(distance, bearing_1);
-		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
-		
+	
 	} else {
-		// pitch_1 > pitch_2
-		let distance = -ground * cot((pitch_2 / 180) * Math.PI);
-		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan((pitch_1 / 180) * Math.PI) + ground;
-		display_height.textContent = `${height.toFixed(2)}`;
+        let minPitch = Math.min(pitch_1, pitch_2);
+        let maxPitch = Math.max(pitch_1, pitch_2);
 
-		const start = new LatLon(lat, lon); // 初始座標
-		endPoint = start.destinationPoint(distance, bearing_2);
-		button_coords.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-		console.log(`終點座標: ${endPoint.lat}, ${endPoint.lon}`);
+		let distance = GetAdjacent(minPitch);
+		display_distance.textContent = `${distance.toFixed(2)}`;
+		let height = distance * Math.tan(toRadians(maxPitch)) + ground;
+		display_height.textContent = `${height.toFixed(2)}`;
+		
+		let bearing = (bearing_1 + bearing_2) / 2
+		endPoint = destinationPoint(lat, lon, distance, bearing);
+		button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
+		console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
 		
 	}
 }
