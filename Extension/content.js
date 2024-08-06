@@ -41,7 +41,7 @@
 
 	// Create title
 	const title = document.createElement('div');
-	title.innerText = 'Height Estimation';
+	title.innerText = 'StreetView AddOn';
         title.classList.add('title');
 
 	// Create input field or toggle
