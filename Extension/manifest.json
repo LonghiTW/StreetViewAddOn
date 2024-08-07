@@ -1,8 +1,8 @@
 {
 	"manifest_version": 3,
-	"name": "StreetView AddOn",
+	"name": "Street View Add-On",
 	"version": "2.0",
-	"description": "A Google StreetView AddOn with height and coordinates estimation.",
+	"description": "A Google Street View Add-On with height and coordinates estimation.",
 	"permissions": ["activeTab", "scripting", "storage"],
 	"host_permissions": ["*://*.google.com/*"],
 	"action": {
