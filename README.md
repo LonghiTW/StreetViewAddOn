@@ -15,7 +15,7 @@
 4. Click the **Load unpacked** button and select the directory of the folder you just unzip.
 5. Done! Open Google Street View to check.
 ## How does it work
-1. From the StreetView URL, we can retrieve the **Coordinates**, **Yaw** (bearing), and **Pitch** of the camera.
+1. From the Street View URL, we can retrieve the **Coordinates**, **Yaw** (bearing), and **Pitch** of the camera.
 2. The **Distance** to the object is determined using the camera height (2.5m) and the Pitch when capturing the intersection point between the object and the floor.
 3. The **Height** of the object is determined using the Distance and the Pitch when capturing the object's vertex.
 4. The **Coordinates** of the object can be determined using the Coordinates, the Distance and the Yaw of the camera when capturing the object.
