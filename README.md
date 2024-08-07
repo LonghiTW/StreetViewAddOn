@@ -14,6 +14,11 @@
 3. Enable **Developer Mode** by clicking the toggle.
 4. Click the **Load unpacked** button and select the directory of the folder you just unzip.
 5. Done! Open Google Street View to check.
+## How does it work
+1. From the StreetView URL, we can retrieve the **Coordinates**, **Yaw** (bearing), and **Pitch** of the camera.
+2. The **Distance** to the object is determined using the camera height (2.5m) and the Pitch when capturing the intersection point between the object and the floor.
+3. The **Height** of the object is determined using the Distance and the Pitch when capturing the object's vertex.
+4. The **Coordinates** of the object can be determined using the Coordinates, the Distance and the Yaw of the camera when capturing the object.
 ## Note
 This tool is based on an easy Trigonometric Measurements method, so there have some principles need to know.
 1. Need an intersection point between building and ground and the point you want to measure.
@@ -21,6 +26,7 @@ This tool is based on an easy Trigonometric Measurements method, so there have s
 3. ~~The building and camera must be on the same height plane, so the closer the camera is to the building, the more accurate the estimate will typically be.~~
 4. ~~Street View must be captured by a Street View car with a camera height of 2.5 m, not a Street View Trekker.~~
 > Now you can deal with these situations mentioned in 3 and 4 by adding modifier.
+5. The Coordinates of the camera are not necessarily correct, especially images taken by Street View Trekker. The Yaw and pitch may also have a bit distortion.
 
 ![Height Estimation.png](https://github.com/LonghiTW/HeightEstimationForGMaps/blob/main/Height%20Estimation.png)
 > Materials from [いらすとや](https://www.irasutoya.com/)
