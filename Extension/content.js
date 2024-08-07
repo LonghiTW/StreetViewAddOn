@@ -41,7 +41,7 @@
 
 	// Create title
 	const title = document.createElement('div');
-	title.innerText = 'StreetView AddOn';
+	title.innerText = 'Street View Add-On';
         title.classList.add('title');
 
 	// Create input field or toggle
