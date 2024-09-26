@@ -56,11 +56,13 @@ const button_style =
 
 // Create buttons
 const button_point1 = document.createElement('button');
+button_point1.title = 'Click to set Point.';
 button_point1.innerText = 'Point 1';
 button_point1.onclick = () => handleClick_point(1);
 button_point1.style.cssText = button_style;
 
 const button_point2 = document.createElement('button');
+button_point2.title = 'Click to set Point.';
 button_point2.innerText = 'Point 2';
 button_point2.onclick = () => handleClick_point(2);
 button_point2.style.cssText = button_style;
@@ -69,6 +71,7 @@ button_point2.style.cssText = button_style;
 const coords_style =
 	'grid-column: 1 / span 2; min-width: 7rem; width: 100%; background-color: gray; color: black; padding: 10px; border-radius: 5px; text-align: center;align-self:center;justify-self:center; cursor: pointer;';
 const button_coords = document.createElement('button');
+button_coords.title = 'Click to copy coordinates.';
 button_coords.innerText = 'Coordinates';
 button_coords.onclick = handleClick_coords;
 button_coords.style.cssText = coords_style;
