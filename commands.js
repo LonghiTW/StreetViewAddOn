@@ -67,7 +67,7 @@ button_point2.style.cssText = button_style;
 
 // Create coordinates button
 const coords_style =
-	'grid-column: 1 / span 2; min-width: 7rem; width: 100%; background-color: gray; color: white; padding: 10px; border-radius: 5px; text-align: center;align-self:center;justify-self:center; cursor: pointer;';
+	'grid-column: 1 / span 2; min-width: 7rem; width: 100%; background-color: gray; color: black; padding: 10px; border-radius: 5px; text-align: center;align-self:center;justify-self:center; cursor: pointer;';
 const button_coords = document.createElement('button');
 button_coords.innerText = 'Coordinates';
 button_coords.onclick = handleClick_coords;
