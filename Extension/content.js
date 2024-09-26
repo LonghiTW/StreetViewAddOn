@@ -56,17 +56,20 @@
 
 	// Create buttons
 	const button_point1 = document.createElement('button');
+	button_point1.title = 'Click to set Point.';
 	button_point1.innerText = 'Point 1';
 	button_point1.onclick =  () => handleClick_point(1);
 	button_point1.classList.add('button');
 
 	const button_point2 = document.createElement('button');
+	button_point2.title = 'Click to set Point.';
 	button_point2.innerText = 'Point 2';
 	button_point2.onclick =  () => handleClick_point(2);
 	button_point2.classList.add('button');
 
 	// Create coordinates button
 	const button_coords = document.createElement('button');
+	button_coords.title = 'Click to copy coordinates.';
 	button_coords.innerText = 'Coordinates';
 	button_coords.onclick = handleClick_coords;
 	button_coords.classList.add('coords');
