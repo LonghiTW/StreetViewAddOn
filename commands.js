@@ -222,6 +222,47 @@ function parseUrl(url) {
     return { lat, lon, bearing, pitch };
 }
 
+// Height & Coordinates estimation
+function estimate() {
+	modifier = parseFloat(input_modifier.value) / 100 || 0;
+	ground = 2.5 - modifier;
+
+	let url = location.href;
+	const { lat, lon } = parseUrl(url);
+
+    if(typeof pointIndex === 'number'){
+        if (pitch_1 === null || pitch_2 === null) {
+            if ((pointIndex === 1 && pitch_1 < 0) || (pointIndex === 2 && pitch_2 < 0)) {
+                const pitch = pointIndex === 1 ? pitch_1 : pitch_2;
+                let distance = GetAdjacent(pitch);
+                display_distance.textContent = `${distance.toFixed(2)}`;
+
+                const bearing = pointIndex === 1 ? bearing_1 : bearing_2;
+                endPoint = destinationPoint(lat, lon, distance, bearing);
+                button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
+                console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
+            }
+	}
+        return; // Do nothing
+    }
+	
+    if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
+        display_height.textContent = 'Error';
+        display_distance.textContent = 'Error';
+        return;
+	}
+	
+    let minPitch = Math.min(pitch_1, pitch_2);
+    let maxPitch = Math.max(pitch_1, pitch_2);
+    let distance = GetAdjacent(minPitch);
+    display_distance.textContent = `${distance.toFixed(2)}`;
+    let height = distance * Math.tan(toRadians(maxPitch)) + ground;
+    display_height.textContent = `${height.toFixed(2)}`;
+    let bearing = (bearing_1 + bearing_2) / 2;
+    endPoint = destinationPoint(lat, lon, distance, bearing);
+    button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
+    console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
+}
 // Functions to handle button clicks
 function handleClick_point(pointIndex) {
     let url = location.href;
@@ -236,39 +277,7 @@ function handleClick_point(pointIndex) {
         bearing_2 = bearing_temp;
         display_point2.textContent = `${pitch_2 + 90}`;
     }
-
-    if (pitch_1 === null || pitch_2 === null) {
-        if ((pointIndex === 1 && pitch_1 < 0) || (pointIndex === 2 && pitch_2 < 0)) {
-            const pitch = pointIndex === 1 ? pitch_1 : pitch_2;
-            let distance = GetAdjacent(pitch);
-            display_distance.textContent = `${distance.toFixed(2)}`;
-
-            const bearing = pointIndex === 1 ? bearing_1 : bearing_2;
-            endPoint = destinationPoint(lat, lon, distance, bearing);
-            button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
-            console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
-        }
-        return; // Do nothing
-    }
-
-    if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
-        display_height.textContent = 'Error';
-        display_distance.textContent = 'Error';
-        return;
-    } else {
-        let minPitch = Math.min(pitch_1, pitch_2);
-        let maxPitch = Math.max(pitch_1, pitch_2);
-
-        let distance = GetAdjacent(minPitch);
-        display_distance.textContent = `${distance.toFixed(2)}`;
-        let height = distance * Math.tan(toRadians(maxPitch)) + ground;
-        display_height.textContent = `${height.toFixed(2)}`;
-
-        let bearing = (bearing_1 + bearing_2) / 2;
-        endPoint = destinationPoint(lat, lon, distance, bearing);
-        button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
-        console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
-    }
+    estimate();
 }
 
 function handleClick_coords() {
@@ -278,7 +287,7 @@ function handleClick_coords() {
     }
 
     const text = `${endPoint.lat}, ${endPoint.lon}`;
-    
+
     navigator.clipboard.writeText(text)
         .then(() => {
             alert(`Coordinates "${text}" copied to clipboard!`);
@@ -288,54 +297,4 @@ function handleClick_coords() {
         });
 }
 
-function updateWhenModifierChange() {
-	modifier = parseFloat(input_modifier.value) / 100 || 0;
-	ground = 2.5 - modifier;
-	
-	let url_2 = location.href;
-	const { lat, lon } = parseUrl(url_2);
-	if (pitch_1 === null || pitch_2 === null) {
-		if (pitch_2 < 0) {
-			let distance = GetAdjacent(pitch_2);
-			display_distance.textContent = `${distance.toFixed(2)}`;
-
-			endPoint = destinationPoint(lat, lon, distance, bearing_2);
-			button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
-			console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
-			
-		}
-		if (pitch_1 < 0) {
-			let distance = GetAdjacent(pitch_1);
-			display_distance.textContent = `${distance.toFixed(2)}`;
-
-			endPoint = destinationPoint(lat, lon, distance, bearing_1);
-			button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
-			console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
-
-		}
-		return; // Do nothing
-	}
-
-	else if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
-		display_height.textContent = 'Error';
-		display_distance.textContent = 'Error';
-		return;
-	
-	} else {
-        let minPitch = Math.min(pitch_1, pitch_2);
-        let maxPitch = Math.max(pitch_1, pitch_2);
-
-		let distance = GetAdjacent(minPitch);
-		display_distance.textContent = `${distance.toFixed(2)}`;
-		let height = distance * Math.tan(toRadians(maxPitch)) + ground;
-		display_height.textContent = `${height.toFixed(2)}`;
-		
-		let bearing = (bearing_1 + bearing_2) / 2
-		endPoint = destinationPoint(lat, lon, distance, bearing);
-		button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
-		console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
-		
-	}
-}
-
-input_modifier.addEventListener('input', updateWhenModifierChange);
+input_modifier.addEventListener('input', estimate);
