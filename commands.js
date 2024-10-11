@@ -56,15 +56,13 @@ const button_style =
 
 // Create buttons
 const button_point1 = document.createElement('button');
-button_point1.title = 'Click to set Point.';
+button_point1.title = 'Click to set Point, double click to reset.';
 button_point1.innerText = 'Point 1';
-button_point1.onclick = () => handleClick_point(1);
 button_point1.style.cssText = button_style;
 
 const button_point2 = document.createElement('button');
-button_point2.title = 'Click to set Point.';
+button_point2.title = 'Click to set Point, double click to reset.';
 button_point2.innerText = 'Point 2';
-button_point2.onclick = () => handleClick_point(2);
 button_point2.style.cssText = button_style;
 
 // Create coordinates button
@@ -223,7 +221,7 @@ function parseUrl(url) {
 }
 
 // Height & Coordinates estimation
-function estimate() {
+function estimate(pointIndex) {
 	modifier = parseFloat(input_modifier.value) / 100 || 0;
 	ground = 2.5 - modifier;
 
@@ -242,8 +240,8 @@ function estimate() {
                 button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
                 console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
             }
-	}
-        return; // Do nothing
+		return; // Do nothing
+	    }
     }
 	
     if ((pitch_1 === pitch_2) || (pitch_1 > 0 && pitch_2 > 0) || (pitch_1 < 0 && pitch_2 < 0)) {
@@ -277,7 +275,26 @@ function handleClick_point(pointIndex) {
         bearing_2 = bearing_temp;
         display_point2.textContent = `${pitch_2 + 90}`;
     }
-    estimate();
+    estimate(pointIndex);
+}
+
+function handleDoubleClick_point(pointIndex) {
+	if (pointIndex === 1) {
+        console.log('Point 1 double clicked');
+        pitch_1 = null;
+        bearing_1 = null;
+        display_point1.textContent = ``;
+    } else {
+        console.log('Point 2 double clicked');
+        pitch_2 = null;
+        bearing_2 = null;
+        display_point2.textContent = ``;
+    }
+	display_distance.textContent = ``;
+    display_height.textContent = ``;
+	endPoint = { lat: null, lon: null }
+	button_coords.innerText = 'Coordinates';
+	estimate(pointIndex);
 }
 
 function handleClick_coords() {
@@ -296,5 +313,12 @@ function handleClick_coords() {
             console.error('Failed to copy coordinates: ', err);
         });
 }
+
+// Add click and double-click handlers
+button_point1.addEventListener('click', () => handleClick_point(1));
+button_point1.addEventListener('dblclick', () => handleDoubleClick_point(1));
+
+button_point2.addEventListener('click', () => handleClick_point(2));
+button_point2.addEventListener('dblclick', () => handleDoubleClick_point(2));
 
 input_modifier.addEventListener('input', estimate);
