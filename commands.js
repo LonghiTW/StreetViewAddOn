@@ -45,6 +45,14 @@ const container = document.createElement('div');
 container.style.cssText =
 	'display: grid; grid-template-columns: auto auto; grid-gap: 15px; align-items: center;';
 
+// Create container for distortion checkbox
+const heightContainer = document.createElement('div');
+heightContainer.style.position = 'relative';
+heightContainer.style.width = '100%';
+heightContainer.style.overflow = 'hidden';
+heightContainer.style.display = 'flex';
+heightContainer.style.alignItems = 'center';
+
 // Create title
 const title = document.createElement('div');
 title.innerText = 'Street View Add-On';
@@ -108,6 +116,19 @@ display_distance.style.cssText = display_style;
 const display_height = document.createElement('div');
 display_height.style.cssText = display_style;
 
+// Create checkbox for distortion
+const checkbox_distortion = document.createElement('input');
+checkbox_distortion.title = 'Whether to consider BTE distortion.';
+checkbox_distortion.type = 'checkbox';
+checkbox_distortion.style.position = 'absolute';
+checkbox_distortion.style.right = '10px';
+checkbox_distortion.style.transform = 'translateY(-50%)';
+checkbox_distortion.style.transform = 'scale(1.5)';
+
+// Append text and checkbox to height container
+heightContainer.appendChild(text_height);
+heightContainer.appendChild(checkbox_distortion);
+
 // Append elements to container
 container.appendChild(title);
 container.appendChild(text_modifier);
@@ -117,7 +138,7 @@ container.appendChild(button_point2);
 container.appendChild(display_point1);
 container.appendChild(display_point2);
 container.appendChild(text_distance);
-container.appendChild(text_height);
+container.appendChild(heightContainer);
 container.appendChild(display_distance);
 container.appendChild(display_height);
 container.appendChild(button_coords);
@@ -131,6 +152,7 @@ let pitch_1 = null;
 let pitch_2 = null;
 let bearing_1 = null;
 let bearing_2 = null;
+let ifdistortion = checkbox_distortion.checked;
 
 let modifier = parseFloat(input_modifier.value) / 100 || 0;
 let ground = 2.5 - modifier;
@@ -256,12 +278,20 @@ function estimate(pointIndex) {
     let maxPitch = Math.max(pitch_1, pitch_2);
     let distance = GetAdjacent(minPitch);
     display_distance.textContent = `${distance.toFixed(2)}`;
-    let height = distance * Math.tan(toRadians(maxPitch)) + ground;
-    display_height.textContent = `${height.toFixed(2)}`;
     let bearing = (bearing_1 + bearing_2) / 2;
     endPoint = destinationPoint(lat, lon, distance, bearing);
 	let distortion = BTE_PROJECTION.getDistortion(endPoint);
 	console.log(`Distortion amount: ${distortion.value}`);
+	
+	ifdistortion = checkbox_distortion.checked;
+	let height = distance * Math.tan(toRadians(maxPitch)) + ground;
+	if (ifdistortion) {
+	    let distortionheight = height * distortion.value
+		display_height.textContent = `${distortionheight.toFixed(2)}`;
+	} else {
+	    display_height.textContent = `${height.toFixed(2)}`;
+	}
+	
     button_coords.innerText = `Coords: ${endPoint.lat.toFixed(5)}, ${endPoint.lon.toFixed(5)}`;
     console.log(`End Point: ${endPoint.lat}, ${endPoint.lon}`);
 }
@@ -326,6 +356,7 @@ button_point2.addEventListener('click', () => handleClick_point(2));
 button_point2.addEventListener('dblclick', () => handleDoubleClick_point(2));
 
 input_modifier.addEventListener('input', estimate);
+checkbox_distortion.addEventListener('change', estimate);
 
 // BTE Projection
 // https://github.com/tf2mandeokyi/bte-projection
