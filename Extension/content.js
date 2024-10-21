@@ -1,45 +1,45 @@
 (async () => {
-	let enabled = (await chrome.storage.sync.get('enabled')).enabled;
-	let opentab = (await chrome.storage.sync.get('opentab')).opentab;
+    let enabled = (await chrome.storage.sync.get('enabled')).enabled;
+    let opentab = (await chrome.storage.sync.get('opentab')).opentab;
 
-	console.log('enabled:', enabled, ', opentab:', opentab);
+    console.log('enabled:', enabled, ', opentab:', opentab);
 
-	if (opentab === undefined) {
-		console.log('Setting default value');
-		chrome.storage.sync.set({ enabled: true, opentab: true });
-		enabled = true;
-		opentab = true;
-	}
-	if (!enabled) return;
+    if (opentab === undefined) {
+        console.log('Setting default value');
+        chrome.storage.sync.set({ enabled: true, opentab: true });
+        enabled = true;
+        opentab = true;
+    }
+    if (!enabled) return;
 
-	// Create a div element for the crosshair
-	const crosshair = document.createElement('div');
-	crosshair.classList.add('crosshair');
+    // Create a div element for the crosshair
+    const crosshair = document.createElement('div');
+    crosshair.classList.add('crosshair');
 
-        const horizontalLine = document.createElement('div');
-        horizontalLine.classList.add('horizontal-line');
+    const horizontalLine = document.createElement('div');
+    horizontalLine.classList.add('horizontal-line');
 
-        const verticalLine = document.createElement('div');
-        verticalLine.classList.add('vertical-line');
+    const verticalLine = document.createElement('div');
+    verticalLine.classList.add('vertical-line');
 
-	// Append lines to the crosshair
-	crosshair.appendChild(horizontalLine);
-	crosshair.appendChild(verticalLine);
+    // Append lines to the crosshair
+    crosshair.appendChild(horizontalLine);
+    crosshair.appendChild(verticalLine);
 
-	// Append the crosshair to the body of the document
-	document.body.appendChild(crosshair);
+    // Append the crosshair to the body of the document
+    document.body.appendChild(crosshair);
 
-	// Create body
-	const body = document.getElementsByTagName('body')[0];
+    // Create body
+    const body = document.getElementsByTagName('body')[0];
 
-	// Create container for all elements
-	const outer = document.createElement('div');
+    // Create container for all elements
+    const outer = document.createElement('div');
     outer.classList.add('outer-container');
 
     const container = document.createElement('div');
     container.classList.add('inner-container');
 	
-	// Create container for distortion checkbox
+    // Create container for distortion checkbox
     const heightContainer = document.createElement('div');
     heightContainer.style.position = 'relative';
     heightContainer.style.width = '100%';
@@ -47,71 +47,71 @@
     heightContainer.style.display = 'flex';
     heightContainer.style.alignItems = 'center';
 
-	// Create title
-	const title = document.createElement('div');
-	title.innerText = 'Street View Add-On';
-        title.classList.add('title');
+    // Create title
+    const title = document.createElement('div');
+    title.innerText = 'Street View Add-On';
+    title.classList.add('title');
 
-	// Create input field or toggle
-	const input_modifier = document.createElement('input');
-	input_modifier.type = 'number';
-        input_modifier.placeholder = '0';
-	input_modifier.classList.add('display-area');
+    // Create input field or toggle
+    const input_modifier = document.createElement('input');
+    input_modifier.type = 'number';
+    input_modifier.placeholder = '0';
+    input_modifier.classList.add('display-area');
 	
-	const label_distance = document.createElement('label');
-        label_distance.classList.add('toggle-label');
-        label_distance.setAttribute('for', 'toggle');
+    const label_distance = document.createElement('label');
+    label_distance.classList.add('toggle-label');
+    label_distance.setAttribute('for', 'toggle');
 
-	// Create buttons
-	const button_point1 = document.createElement('button');
-	button_point1.title = 'Click to set Point, double click to reset.';
-	button_point1.innerText = 'Point 1';
-	button_point1.onclick =  () => handleClick_point(1);
-	button_point1.classList.add('button');
+    // Create buttons
+    const button_point1 = document.createElement('button');
+    button_point1.title = 'Click to set Point, double click to reset.';
+    button_point1.innerText = 'Point 1';
+    button_point1.onclick =  () => handleClick_point(1);
+    button_point1.classList.add('button');
 
-	const button_point2 = document.createElement('button');
-	button_point2.title = 'Click to set Point, double click to reset.';
-	button_point2.innerText = 'Point 2';
-	button_point2.onclick =  () => handleClick_point(2);
-	button_point2.classList.add('button');
+    const button_point2 = document.createElement('button');
+    button_point2.title = 'Click to set Point, double click to reset.';
+    button_point2.innerText = 'Point 2';
+    button_point2.onclick =  () => handleClick_point(2);
+    button_point2.classList.add('button');
 
-	// Create coordinates button
-	const button_coords = document.createElement('button');
-	button_coords.title = 'The coordinates of object. Click to copy them.';
-	button_coords.innerText = 'Coordinates';
-	button_coords.onclick = handleClick_coords;
-	button_coords.classList.add('coords');
+    // Create coordinates button
+    const button_coords = document.createElement('button');
+    button_coords.title = 'The coordinates of object. Click to copy them.';
+    button_coords.innerText = 'Coordinates';
+    button_coords.onclick = handleClick_coords;
+    button_coords.classList.add('coords');
 	
-	// Create display areas
-	const text_modifier = document.createElement('div');
-	text_modifier.title = 'Modify the height difference between object and camera.';
-	text_modifier.classList.add('display-area') + 'overflow:hidden;';
-	text_modifier.textContent = `Modifier(cm)`;
+    // Create display areas
+    const text_modifier = document.createElement('div');
+    text_modifier.title = 'Modify the height difference between object and camera.';
+    text_modifier.classList.add('display-area') + 'overflow:hidden;';
+    text_modifier.textContent = `Modifier(cm)`;
 	
-	const text_height = document.createElement('div');
-	text_height.title = 'The height of object.';
-	text_height.classList.add('display-area') + 'overflow:hidden;';
-	text_height.textContent = `Height(m)`;
+    const text_height = document.createElement('div');
+    text_height.title = 'The height of object.';
+    text_height.classList.add('display-area') + 'overflow:hidden;';
+    text_height.textContent = `Height(m) - -`;
 
-	const display_point1 = document.createElement('div');
-	display_point1.classList.add('display-area');
+    const display_point1 = document.createElement('div');
+    display_point1.classList.add('display-area');
 
-	const display_point2 = document.createElement('div');
-	display_point2.classList.add('display-area');
+    const display_point2 = document.createElement('div');
+    display_point2.classList.add('display-area');
 	
-	const text_distance = document.createElement('div');
-	//text_distance.type = 'checkbox';
-	text_distance.title = 'The distance between object and camera.';
-	text_distance.textContent = `Distance(m)`;
-	text_distance.classList.add('display-area');
+    const text_distance = document.createElement('div');
+    //text_distance.type = 'checkbox';
+    text_distance.title = 'The distance between object and camera.';
+    text_distance.textContent = `Distance(m)`;
+    text_distance.classList.add('display-area');
 	
-	const display_distance = document.createElement('div');
-	display_distance.classList.add('display-area');
+    const display_distance = document.createElement('div');
+    display_distance.classList.add('display-area');
 
-	const display_height = document.createElement('div');
-	display_height.classList.add('display-area');
+    const display_height = document.createElement('div');
+    display_height.classList.add('display-area');
 	
-	// Create checkbox for distortion
+    // Create checkbox for distortion
     const checkbox_distortion = document.createElement('input');
     checkbox_distortion.title = 'Whether to consider BTE distortion.';
     checkbox_distortion.type = 'checkbox';
