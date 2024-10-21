@@ -331,6 +331,7 @@ function handleDoubleClick_point(pointIndex) {
     display_height.textContent = ``;
 	endPoint = { lat: null, lon: null }
 	button_coords.innerText = 'Coordinates';
+	pointIndex = (pointIndex === 1) ? 2 : 1;
 	estimate(pointIndex);
 }
 
