@@ -124,7 +124,7 @@ const checkbox_distortion = document.createElement('input');
 checkbox_distortion.title = 'Whether to consider BTE distortion.';
 checkbox_distortion.type = 'checkbox';
 checkbox_distortion.style.position = 'absolute';
-checkbox_distortion.style.right = '10px';
+checkbox_distortion.style.right = '13px';
 checkbox_distortion.style.transform = 'translateY(-50%)';
 checkbox_distortion.style.transform = 'scale(1.5)';
 
