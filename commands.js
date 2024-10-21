@@ -100,7 +100,7 @@ text_modifier.textContent = `Modifier(cm)`;
 const text_height = document.createElement('div');
 text_height.title = 'The height of object.';
 text_height.style.cssText = display_style + 'overflow:hidden;';
-text_height.textContent = `Height(m)`;
+text_height.textContent = `Height(m) - -`;
 
 const display_point1 = document.createElement('div');
 display_point1.style.cssText = display_style;
