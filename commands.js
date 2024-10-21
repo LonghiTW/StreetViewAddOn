@@ -77,7 +77,7 @@ button_point2.style.cssText = button_style;
 const coords_style =
 	'grid-column: 1 / span 2; min-width: 7rem; width: 100%; background-color: gray; color: black; padding: 10px; border-radius: 5px; text-align: center;align-self:center;justify-self:center; cursor: pointer;';
 const button_coords = document.createElement('button');
-button_coords.title = 'Click to copy coordinates.';
+button_coords.title = 'The coordinates of object. Click to copy them.';
 button_coords.innerText = 'Coordinates';
 button_coords.onclick = handleClick_coords;
 button_coords.style.cssText = coords_style;
@@ -93,10 +93,12 @@ input_modifier.style.cssText = display_style;
 
 // Create display areas
 const text_modifier = document.createElement('div');
+text_modifier.title = 'Modify the height difference between object and camera.';
 text_modifier.style.cssText = display_style + 'overflow:hidden;';
 text_modifier.textContent = `Modifier(cm)`;
 
 const text_height = document.createElement('div');
+text_height.title = 'The height of object.';
 text_height.style.cssText = display_style + 'overflow:hidden;';
 text_height.textContent = `Height(m)`;
 
@@ -107,6 +109,7 @@ const display_point2 = document.createElement('div');
 display_point2.style.cssText = display_style;
 
 const text_distance = document.createElement('div');
+text_distance.title = 'The distance between object and camera.';
 text_distance.textContent = `Distance(m)`;
 text_distance.style.cssText = display_style;
 
