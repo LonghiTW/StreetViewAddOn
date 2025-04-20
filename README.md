@@ -14,6 +14,23 @@
 3. Enable **Developer Mode** by clicking the toggle.
 4. Click the **Load unpacked** button and select the directory of the folder you just unzip.
 5. Done! Open Google Street View to check.
+### Broswer Book Mark
+1. add a new bookmark with somename
+2. paste code below to the link
+```js
+javascript:(async () => {
+  try {
+    const r = await fetch("https://raw.githubusercontent.com/LonghiTW/StreetViewAddOn/main/commands.js");
+    const t = await r.text();
+    eval(t);
+  } catch (e) {
+    console.error(e);
+    alert("Failed to load the script.");
+  }
+})();
+```
+3. use this book mark on google map
+
 ## How does it work
 1. From the Street View URL, we can retrieve the **Coordinates**, **Yaw** (bearing), and **Pitch** of the camera.
 2. The **Distance** to the object is determined using the camera height (2.5m) and the Pitch when capturing the intersection point between the object and the floor.
