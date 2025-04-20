@@ -24,7 +24,7 @@ javascript:(async () => {
 })();
 ```
 3. Use this bookmark on Google Maps.
-### Extension
+### Extension (Recommend)
 1. Download [ZIP](https://github.com/LonghiTW/StreetViewAddOn/releases) and unzip it.
 2. Go to the Extensions page by entering `chrome://extensions` in a new tab.
 3. Enable **Developer Mode** by clicking the toggle.
