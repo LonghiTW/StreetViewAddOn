@@ -8,12 +8,29 @@
 2. Open DevTool(F12).
 3. Copy [commands](https://github.com/LonghiTW/StreetViewAddOn/blob/main/commands.js) and paste it to console.
 4. Close DevTool(F12).
-### Extension
+### Browser Bookmark
+1. Add a new bookmark with a name of your choice.
+2. Paste the code below into the URL field of the bookmark:
+```js
+javascript:(async () => {
+  try {
+    const response = await fetch("https://raw.githubusercontent.com/LonghiTW/StreetViewAddOn/main/commands.js");
+    const script = await response.text();
+    eval(script);
+  } catch (error) {
+    console.error(error);
+    alert("Failed to load the script.");
+  }
+})();
+```
+3. Use this bookmark on Google Maps.
+### Extension (Recommend)
 1. Download [ZIP](https://github.com/LonghiTW/StreetViewAddOn/releases) and unzip it.
 2. Go to the Extensions page by entering `chrome://extensions` in a new tab.
 3. Enable **Developer Mode** by clicking the toggle.
 4. Click the **Load unpacked** button and select the directory of the folder you just unzip.
 5. Done! Open Google Street View to check.
+
 ## How does it work
 1. From the Street View URL, we can retrieve the **Coordinates**, **Yaw** (bearing), and **Pitch** of the camera.
 2. The **Distance** to the object is determined using the camera height (2.5m) and the Pitch when capturing the intersection point between the object and the floor.
