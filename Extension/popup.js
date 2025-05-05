@@ -1,9 +1,13 @@
+if (typeof browser === "undefined") {
+  var browser = chrome;
+}
+
 (async () => {
   document.addEventListener('DOMContentLoaded', async function () {
     const SwitchStatus = document.getElementById('MainSwitch');
   
     // Get initial status
-    const { enabled } = await chrome.storage.sync.get('enabled');
+    const { enabled } = await browser.storage.sync.get('enabled');
   
     // Set checkbox status
     SwitchStatus.checked = enabled;
@@ -13,9 +17,9 @@
       const isChecked = SwitchStatus.checked;
   
       // Update status
-      await chrome.storage.sync.set({
+      await browser.storage.sync.set({
         enabled: isChecked,
-        opentab: (await chrome.storage.sync.get('opentab')).opentab,
+        opentab: (await browser.storage.sync.get('opentab')).opentab,
       });
     });
   });
