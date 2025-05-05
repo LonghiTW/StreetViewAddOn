@@ -3,18 +3,18 @@
   "name": "Street View Add-On",
   "version": "2.1",
   "description": "A Google Street View Add-On with height and coordinates estimation.",
-  "applications": {
-    "gecko": {
-      "id": "streetviewaddon@example.com",
-      "strict_min_version": "109.0"
-    }
-  },
-  "permissions": ["storage"],
+  "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["*://*.google.com/*"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": "streetview.png"
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["down.svg"],
+      "matches": ["https://*/*"]
+    }
+  ],
   "icons": {
     "16": "streetview.png",
     "48": "streetview.png",
@@ -26,5 +26,11 @@
       "css": ["styles.css"],
       "js": ["content.js"]
     }
-  ]
+  ],
+  "applications": {
+    "gecko": {
+      "id": "streetview-addon@example.com",
+      "strict_min_version": "109.0"
+    }
+  }
 }
