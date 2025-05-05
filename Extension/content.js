@@ -1,12 +1,16 @@
+if (typeof browser === "undefined") {
+  var browser = chrome;
+}
+
 (async () => {
-    let enabled = (await chrome.storage.sync.get('enabled')).enabled;
-    let opentab = (await chrome.storage.sync.get('opentab')).opentab;
+    let enabled = (await browser.storage.sync.get('enabled')).enabled;
+    let opentab = (await browser.storage.sync.get('opentab')).opentab;
 
     console.log('enabled:', enabled, ', opentab:', opentab);
 
     if (opentab === undefined) {
         console.log('Setting default value');
-        chrome.storage.sync.set({ enabled: true, opentab: true });
+        browser.storage.sync.set({ enabled: true, opentab: true });
         enabled = true;
         opentab = true;
     }
@@ -149,7 +153,7 @@
     const compoents = [outer, crosshair];
 
     let toggleDisplay = document.createElement('img');
-    toggleDisplay.src = chrome.runtime.getURL('down.svg');
+    toggleDisplay.src = browser.runtime.getURL('down.svg');
     toggleButton.id = 'toggleDisplay';
     toggleButton.appendChild(toggleDisplay);
 
@@ -167,7 +171,7 @@
             },
         );
         if (!update) return;
-        chrome.storage.sync.set({
+        browser.storage.sync.set({
                 opentab: toggle,
             })
             .then(() => {
