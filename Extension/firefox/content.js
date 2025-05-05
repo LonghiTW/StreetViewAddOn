@@ -1,3 +1,7 @@
+if (typeof browser === "undefined") {
+  var browser = chrome;
+}
+
 (async () => {
     let { enabled = true, opentab = true } = await browser.storage.sync.get(['enabled', 'opentab']);
 
