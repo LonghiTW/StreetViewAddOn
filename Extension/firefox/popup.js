@@ -1,3 +1,7 @@
+if (typeof browser === "undefined") {
+  var browser = chrome;
+}
+
 (async () => {
   document.addEventListener('DOMContentLoaded', async function () {
     const SwitchStatus = document.getElementById('MainSwitch');
