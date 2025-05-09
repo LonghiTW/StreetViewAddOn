@@ -4,7 +4,7 @@
 * Coordinates Estimation
 ## How to use
 ### DevTool
-1. Open Google Street View.
+1. Open [Google Maps](https://maps.google.com/maps) Street View.
 2. Open DevTool(F12).
 3. Copy [commands](https://github.com/LonghiTW/StreetViewAddOn/blob/main/commands.js) and paste it to console.
 4. Close DevTool(F12).
@@ -23,16 +23,17 @@ javascript:(async () => {
   }
 })();
 ```
-3. Use this bookmark on Google Maps.
+3. Use this bookmark on [Google Maps](https://maps.google.com/maps).
 ### Extension (Recommend)
 #### Chrome 
 1. Download [ZIP](https://github.com/LonghiTW/StreetViewAddOn/releases) and unzip it.
 2. Go to the Extensions page by entering `chrome://extensions` in a new tab.
 3. Enable **Developer Mode** by clicking the toggle.
 4. Click the **Load unpacked** button and select the directory of the folder you just unzip.
-5. Done! Open Google Street View to check.
+5. Done! Open [Google Maps](https://maps.google.com/maps) Street View to use.
 #### Firefox
-Install it on https://addons.mozilla.org/addon/street-view-add-on/
+1. Install it on https://addons.mozilla.org/addon/street-view-add-on/.
+2. Done! Open [Google Maps](https://maps.google.com/maps) Street View to use.
 
 ## How does it work
 1. From the Street View URL, we can retrieve the **Coordinates**, **Yaw** (bearing), and **Pitch** of the camera.
