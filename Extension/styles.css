@@ -48,6 +48,15 @@
     align-items: center;
 }
 
+/* Height container styles */
+.height-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}	
+
 /* Title styles */
 .title {
     grid-column: 1 / span 2;
@@ -111,4 +120,12 @@
     width: 24px;
     height: 24px;
     cursor: pointer;
+}
+
+/* Distortion checkbox styles */
+.distortion-checkbox {
+    position: absolute;
+    right: 13px;
+    transform: translateY(-50%);
+    transform: scale(1.5);
 }
